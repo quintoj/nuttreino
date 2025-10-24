@@ -26,7 +26,10 @@ const SupplementItem: React.FC<{ supplement: Supplement, onToggle: (id: number) 
                 <p className="font-semibold text-sm text-slate-800">{supplement.name}</p>
                 <div className="flex items-center text-xs text-slate-500">
                     <span>{supplement.dosage}</span>
-                    <Icons.Info className="w-3 h-3 ml-2 text-slate-400 cursor-help" title={supplement.timing}/>
+                    {/* Fix: The `title` prop is not valid on SVG elements. Wrapped the icon in a `span` to apply the tooltip. */}
+                    <span title={supplement.timing}>
+                        <Icons.Info className="w-3 h-3 ml-2 text-slate-400 cursor-help" />
+                    </span>
                     <span className="ml-1 hidden sm:inline">{supplement.timing}</span>
                 </div>
             </div>

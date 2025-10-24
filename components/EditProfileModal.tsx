@@ -8,8 +8,9 @@ interface EditProfileModalProps {
     onClose: () => void;
 }
 
-const ModalInput: React.FC<{ label: string; name: keyof Profile; value: any; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; type?: string; unit?: string; as?: 'textarea' }> = 
-({ label, name, value, onChange, type = 'text', unit, as = 'input' }) => (
+// Fix: Add `placeholder` to the component's props to allow passing it to the underlying input/textarea.
+const ModalInput: React.FC<{ label: string; name: keyof Profile; value: any; onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void; type?: string; unit?: string; as?: 'textarea', placeholder?: string }> = 
+({ label, name, value, onChange, type = 'text', unit, as = 'input', placeholder }) => (
     <div>
         <label htmlFor={name} className="block text-sm font-medium text-slate-600 mb-1">{label}</label>
         <div className="flex items-center">
@@ -20,6 +21,7 @@ const ModalInput: React.FC<{ label: string; name: keyof Profile; value: any; onC
                     value={value}
                     onChange={onChange}
                     rows={3}
+                    placeholder={placeholder}
                     className="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
                 />
             ) : (
@@ -29,6 +31,7 @@ const ModalInput: React.FC<{ label: string; name: keyof Profile; value: any; onC
                     type={type}
                     value={value}
                     onChange={onChange}
+                    placeholder={placeholder}
                     className="w-full p-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm"
                     step={type === 'number' ? '0.1' : undefined}
                 />

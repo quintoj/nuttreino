@@ -1,5 +1,5 @@
 {
-  "name": "Dyad Nutri & Fitness AI",
+  "name": "NutTreino",
   "description": "A personalized dashboard for nutrition and fitness planning, powered by AI. Users can input their profile data, set weight loss goals, and generate custom meal plans, workout routines, and supplement suggestions based on their specific needs and restrictions.",
   "requestFramePermissions": []
 }

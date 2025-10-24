@@ -21,8 +21,11 @@ const FastingTimer: React.FC<FastingTimerProps> = ({ strategy }) => {
 
     const [timeRemaining, setTimeRemaining] = useState(TOTAL_DURATION_SECONDS);
     const [isActive, setIsActive] = useState(false);
+    const [startTimeInput, setStartTimeInput] = useState('');
 
     useEffect(() => {
+        setIsActive(false);
+        setStartTimeInput('');
         setTimeRemaining(TOTAL_DURATION_SECONDS);
     }, [TOTAL_DURATION_SECONDS]);
 
@@ -53,13 +56,46 @@ const FastingTimer: React.FC<FastingTimerProps> = ({ strategy }) => {
     }, [timeRemaining, TOTAL_DURATION_SECONDS]);
 
     const handleStart = () => {
-        if (timeRemaining <= 0) setTimeRemaining(TOTAL_DURATION_SECONDS);
+        if (!isActive) { // Only calculate start time when beginning or resuming
+            if (startTimeInput) {
+                const now = new Date();
+                const [hours, minutes] = startTimeInput.split(':').map(Number);
+                
+                if (!isNaN(hours) && !isNaN(minutes)) {
+                    const startDate = new Date();
+                    startDate.setHours(hours, minutes, 0, 0);
+
+                    // If the start time is in the future, assume it was yesterday
+                    if (startDate > now) {
+                        startDate.setDate(startDate.getDate() - 1);
+                    }
+
+                    const elapsedSeconds = Math.floor((now.getTime() - startDate.getTime()) / 1000);
+
+                    if (elapsedSeconds >= TOTAL_DURATION_SECONDS) {
+                        setTimeRemaining(0); // Fast is already complete
+                    } else if (elapsedSeconds > 0) {
+                        setTimeRemaining(TOTAL_DURATION_SECONDS - elapsedSeconds);
+                    } else {
+                        setTimeRemaining(TOTAL_DURATION_SECONDS); // Start fresh if time is invalid
+                    }
+                } else {
+                     setTimeRemaining(TOTAL_DURATION_SECONDS); // Start fresh if time is invalid
+                }
+
+            } else {
+                if (timeRemaining <= 0) {
+                    setTimeRemaining(TOTAL_DURATION_SECONDS);
+                }
+            }
+        }
         setIsActive(!isActive);
     };
 
     const handleReset = () => {
         setIsActive(false);
         setTimeRemaining(TOTAL_DURATION_SECONDS);
+        setStartTimeInput('');
     };
 
     return (
@@ -82,6 +118,21 @@ const FastingTimer: React.FC<FastingTimerProps> = ({ strategy }) => {
             <p className="text-center text-sm text-slate-600 mb-6">
                 Janela alimentar: {eatingHours} horas
             </p>
+
+            <div className="mb-6 space-y-1">
+                <label htmlFor="start-time" className="block text-sm font-medium text-slate-600 text-center">
+                    Hora de Início (opcional)
+                </label>
+                <input
+                    id="start-time"
+                    type="time"
+                    value={startTimeInput}
+                    onChange={(e) => setStartTimeInput(e.target.value)}
+                    disabled={isActive}
+                    className="w-full max-w-xs mx-auto block p-2 border border-slate-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 text-sm disabled:bg-slate-100 disabled:cursor-not-allowed"
+                />
+            </div>
+
 
             <div className="flex items-center justify-center gap-4">
                 <button 
